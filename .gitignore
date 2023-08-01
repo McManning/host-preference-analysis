@@ -1,0 +1,5 @@
+__pycache__
+postgresql/data/pgdata
+.ignore
+ebird/imports
+

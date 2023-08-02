@@ -5,7 +5,7 @@ from ipa import ipa
 
 RANDOM_ROW_SIZE = 2
 
-BOOTSTRAP_SAMPLES = 1_000
+BOOTSTRAP_SAMPLES = 1_001
 
 
 def ipa_bootstrap(initial_proportionality, verbose: bool = False):
@@ -88,18 +88,7 @@ def ipa_bootstrap(initial_proportionality, verbose: bool = False):
     # y = estimated_preferences
     # e = back_transformed_mean  # np.zeros(initial_proportionality.shape[1])
 
-    # We want a box plot per prey
-
-    data = np.vstack(bootstrap_estimates)
-
-    fig, ax = plt.subplots()
-    ax.boxplot(data)
-    ax.set_xlabel('Prey')
-    ax.set_ylabel('Preference')
-    # ax.set_xticklabels(
-    #     ['Blue Jay', 'Cardinal', 'Robin', 'Peepee', 'poo', 'fizz'])
-
-    return ipa_matrix, estimated_preferences, ax
+    return ipa_matrix, estimated_preferences, bootstrap_estimates
 
     # plt.savefig('foo.png')
 
@@ -118,4 +107,7 @@ if __name__ == '__main__':
         [-1, 0.20, 0.31, 0.06, 0.12, 0.31]
     ])
 
-    print(ipa_bootstrap(sample_initial_preferences, verbose=True))
+    ipa_matrix, estimated_preferences, bootstrap_estimates = ipa_bootstrap(
+        sample_initial_preferences, verbose=True)
+
+    print(estimated_preferences)

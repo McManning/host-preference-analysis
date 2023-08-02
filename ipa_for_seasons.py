@@ -169,20 +169,43 @@ def run_season(season, export_tag):
         f'{RESULTS_PATH}/{export_tag}/{export_tag} - {season} - Initial proportionality.xlsx')
 
     if WITH_BOOTSTRAP:
-        try:
-            ipa_matrix, preferences, ax = ipa_bootstrap(
-                initial_proportionality, verbose=False)
+        # try:
+        ipa_matrix, preferences, bootstrap_estimates = ipa_bootstrap(
+            initial_proportionality,
+            verbose=False
+        )
 
-            ax.set_label(f'{season} - {export_tag}')
-            ax.set_xticklabels(prey, rotation=90)
-            # plt.tight_layout()
-            # plt.show()
-            plt.savefig(
-                f'{RESULTS_PATH}/boxplots/{season} - {export_tag} boxplot.png',
-                bbox_inches='tight')
-        except ValueError:
-            print(f'SKIP: {export_tag} - {season}')
-            return
+        # Generate statistics from bootstrapping
+
+        data = np.vstack(bootstrap_estimates)
+
+        # Bootstrap box plots
+        fig, ax = plt.subplots()
+        ax.boxplot(data)
+        ax.set_xlabel('Prey')
+        ax.set_ylabel('Preference')
+        ax.set_label(f'{season} - {export_tag}')
+        ax.set_xticklabels(prey, rotation=90)
+        # plt.tight_layout()
+        # plt.show()
+
+        plt.savefig(
+            f'{RESULTS_PATH}/bootstrapping/{season} - {export_tag} boxplot.png',
+            bbox_inches='tight')
+
+        # Distribution of samples across the same prey
+        # Using the Shapiro-Wilk test for normality
+        for i in range(len(prey)):
+            res = shapiro(data[i].transpose())
+            print(f'Prey {prey[i]}')
+            print(res)
+            if res.pvalue < 0.05:
+                print(
+                    f'!!! Prey {prey[i]} is not normally distributed. p-value: {res.pvalue}')
+
+        # except ValueError:
+        #     print(f'SKIP: {export_tag} - {season}')
+        #     return
     else:
         ipa_matrix, preferences = ipa(initial_proportionality, verbose=True)
 

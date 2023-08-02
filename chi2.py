@@ -66,6 +66,9 @@ for s in species:
     print('\nCONTINGENCY TABLE')
     print(contingency_table)
 
+    print('\nCHI2 RESULTS')
+    print(f'chi2={chi2}, p={p}, dof={dof}, expected={expected}')
+
     # Check if the p-value is below the significance level
     if p < alpha:
         print(
